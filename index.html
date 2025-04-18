@@ -29,6 +29,15 @@
             background-color: #45a049;
         }
 
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100px;
+            text-align: center;
+        }
+
         a {
             color: #007BFF;
             text-decoration: none;
@@ -42,24 +51,51 @@
 <body>
     <h1>Добро пожаловать в мой Mini App!</h1>
 
-    <!-- Кнопка для закрытия -->
-    <button onclick="Telegram.WebApp.close()">Закрыть</button>
+    <!-- Выбор суммы -->
+    <div>
+        <label for="amount">Введите сумму для пополнения:</label>
+        <input type="number" id="amount" name="amount" min="0.1" step="0.1" placeholder="Сумма в TON">
+    </div>
 
-    <!-- Кнопка для пополнения -->
-    <button onclick="openPayment()">Пополнить баланс</button>
+    <!-- Кнопка для оплаты TON -->
+    <button onclick="payTON()">Оплатить через TON</button>
 
-    <!-- Реферальная ссылка -->
-    <p>Реферальная ссылка: <a href="https://example.com?ref=your_ref_code" target="_blank">Ссылка для приглашения</a></p>
+    <p>Реферальная ссылка: <a href="https://vaskanx.github.io/My-mini-app/?ref=your_ref_code" target="_blank">Ссылка для приглашения</a></p>
+
+    <!-- Место для сообщения об успешной оплате -->
+    <div id="successMessage" style="display:none; color: green; margin-top: 20px;">
+        <h3>Оплата прошла успешно! Спасибо за пополнение!</h3>
+    </div>
 
     <script>
+        // Функция для перехода в Tonkeeper с вводом суммы
+        function payTON() {
+            const wallet = "UQDyF3c6uCGHIbbLdEkj9VJeGdYZNiWOqB2UeJTivaKmOvJn";
+            const amount = document.getElementById('amount').value; // Берём сумму из поля ввода
+            if (!amount || amount <= 0) {
+                alert('Пожалуйста, укажите сумму для перевода!');
+                return;
+            }
+
+            const comment = encodeURIComponent("Пополнение баланса в Mini App");
+            const url = `https://tonkeeper.app/transfer/${wallet}?amount=${amount}&text=${comment}`;
+            window.open(url, "_blank");
+
+            // После успешной оплаты показываем сообщение
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'block';
+            }, 2000); // Имитация успешной оплаты через 2 секунды
+        }
+
+        // Для рефералов (покажем реферальный код)
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        if (refCode) {
+            alert(`Вы зашли через реферальную ссылку: ${refCode}. Поздравляем! Вы получаете бонус!`);
+        }
+
         // Когда Telegram Web App будет готов
         Telegram.WebApp.ready();
-
-        // Функция для пополнения баланса
-        function openPayment() {
-            alert('Переход к пополнению баланса!');
-            // Тут можно добавить свой функционал для пополнения
-        }
     </script>
 </body>
 </html>
