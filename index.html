@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #1a1a1a;
             color: #fff;
             padding: 0;
             margin: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
             height: 100vh;
         }
 
@@ -25,44 +23,36 @@
             margin-top: 50px;
         }
 
-        /* Стили для контента */
-        .tab-content {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            width: 100%;
-            flex-grow: 1;
-        }
-
-        .active {
-            display: block;
-        }
-
-        .tab-buttons {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .tab-buttons button {
-            background: none;
-            color: #fff;
-            font-size: 1.2em;
-            border: none;
+        /* Баланс в левом углу */
+        #balance {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
-        .tab-buttons button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        #balance span {
+            font-size: 18px;
+            font-weight: bold;
         }
 
-        /* Стиль для кнопок внутри вкладок */
+        /* Стиль для пополнения */
+        .deposit-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -78,162 +68,62 @@
             background-color: #45a049;
         }
 
-        /* Контент для кейса */
-        .case-items {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .case-item {
-            width: 120px;
-            height: 120px;
-            background-color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            padding: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .case-item img {
-            width: 70px;
-            height: 70px;
-        }
-
-        .case-item:hover {
-            transform: scale(1.1);
-        }
-
-        .case-price {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #fff;
-        }
-
-        /* Для результата */
-        #winning-item {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* Стиль для профиля и инвайта */
-        .profile-info, .invite-info {
+        /* Профиль */
+        #profile {
             margin-top: 20px;
             font-size: 18px;
         }
-
-        /* Стиль для депозита */
-        .deposit-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        input[type="number"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        #deposit-btn {
-            background-color: #4CAF50;
-        }
-
-        #deposit-btn.disabled {
-            background-color: #bbb;
-            cursor: not-allowed;
-        }
-
     </style>
 </head>
 <body>
-    <h1>Мой Mini App</h1>
 
-    <!-- Вкладки для навигации -->
-    <div class="tab-buttons">
-        <button onclick="switchTab('main')">Main</button>
-        <button onclick="switchTab('invite')">Invite</button>
-        <button onclick="switchTab('profile')">Profile</button>
+    <!-- Баланс -->
+    <div id="balance">
+        <span>Баланс: 0 TON</span>
     </div>
 
-    <!-- Контент Main -->
-    <div id="main" class="tab-content active">
-        <h2>Пополнить баланс</h2>
-        <div class="deposit-container">
-            <input type="number" id="depositAmount" placeholder="Введите сумму (TON)" min="1.5" step="0.1">
-            <button id="deposit-btn" onclick="processDeposit()">Пополнить</button>
-            <p class="error-message" id="error-message"></p>
-        </div>
-        <div id="result"></div>
-    </div>
-
-    <!-- Контент Invite -->
-    <div id="invite" class="tab-content">
-        <h2>Пригласите друзей!</h2>
-        <p>Используйте эту ссылку, чтобы пригласить друзей: <br>
-            <a href="https://t.me/your_username" target="_blank">Пригласить друзей</a>
-        </p>
-    </div>
-
-    <!-- Контент Profile -->
-    <div id="profile" class="tab-content">
+    <!-- Профиль -->
+    <div id="profile">
         <h2>Ваш Профиль</h2>
-        <div class="profile-info">
-            <p>Имя: Ваше имя</p>
-            <p>Баланс: 100 TON</p>
-        </div>
+        <p>Ник: <span id="username">Загрузка...</span></p>
+    </div>
+
+    <!-- Пополнение -->
+    <div class="deposit-container">
+        <h3>Пополнить баланс</h3>
+        <input type="number" id="depositAmount" placeholder="Введите сумму (TON)" min="1.5" step="0.1">
+        <button id="deposit-btn" onclick="processDeposit()">Пополнить</button>
     </div>
 
     <script>
         // Инициализация Telegram Web App
         Telegram.WebApp.ready();
 
-        // Функция переключения вкладок
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
+        // Получение данных пользователя
+        const user = Telegram.WebApp.initDataUnsafe;
+        const username = user.user ? user.user.username : 'Неизвестно';
+        document.getElementById('username').innerText = username;
 
-            const activeTab = document.getElementById(tabName);
-            activeTab.classList.add('active');
-        }
+        // Обновление баланса
+        let balance = 0;
+        document.getElementById('balance').addEventListener('click', () => {
+            // Здесь нужно добавить логику для отображения баланса
+            alert('Баланс: ' + balance + ' TON');
+        });
 
-        // Функция для обработки депозита
+        // Функция пополнения баланса
         function processDeposit() {
             const depositAmount = parseFloat(document.getElementById('depositAmount').value);
-            const errorMessage = document.getElementById('error-message');
-            const depositButton = document.getElementById('deposit-btn');
-            const result = document.getElementById('result');
-
-            // Проверка минимальной суммы депозита
             if (isNaN(depositAmount) || depositAmount < 1.5) {
-                errorMessage.innerText = "Минимальная сумма депозита: 1.5 TON";
-                depositButton.classList.add('disabled');
-            } else {
-                errorMessage.innerText = "";
-                depositButton.classList.remove('disabled');
-
-                // Действия после успешного депозита (например, вызвать функцию для отправки средств)
-                result.innerHTML = `<p>Вы пополнили баланс на ${depositAmount} TON.</p>`;
-                Telegram.WebApp.sendData(`Пополнение на ${depositAmount} TON успешно выполнено.`);
-
-                // Здесь добавь свой код для выполнения транзакции через Telegram-кошелек.
+                alert('Минимальная сумма депозита: 1.5 TON');
+                return;
             }
+
+            balance += depositAmount;
+            alert('Вы пополнили баланс на ' + depositAmount + ' TON');
+            document.getElementById('balance').innerHTML = 'Баланс: ' + balance + ' TON';
         }
     </script>
+
 </body>
 </html>
