@@ -89,6 +89,18 @@
             border-radius: 10px;
             cursor: pointer;
         }
+
+        /* Стиль для навигации */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -99,7 +111,7 @@
     <div id="profile">Ник: <span id="username"></span></div>
 
     <!-- Навигация -->
-    <div>
+    <div class="nav-bar">
         <button class="nav-button" id="mainButton">Главная</button>
         <button class="nav-button" id="inviteButton">Пригласить</button>
         <button class="nav-button" id="profileButton">Профиль</button>
@@ -130,6 +142,17 @@
             } else {
                 alert('Минимальный депозит 1.5 TON');
             }
+        };
+
+        // Обработчики для кнопок навигации
+        document.getElementById("mainButton").onclick = function() {
+            alert("Перейти в раздел кейсов");
+        };
+        document.getElementById("inviteButton").onclick = function() {
+            alert("Перейти в раздел приглашений и рефералов");
+        };
+        document.getElementById("profileButton").onclick = function() {
+            alert("Перейти в профиль");
         };
     </script>
 </body>
