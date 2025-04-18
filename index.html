@@ -7,11 +7,27 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
+        /* Основной стиль */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #fafafa;
+            color: #333;
             padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 1.5em;
         }
 
         button {
@@ -23,55 +39,141 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 10px;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
             background-color: #45a049;
         }
 
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 100px;
+            width: 200px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
             text-align: center;
         }
 
-        a {
+        /* Добавляем стили для вкладок */
+        .tab-buttons {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .tab-buttons button {
+            background-color: #007BFF;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Анимации */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Стиль для реферальной ссылки */
+        .referral {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .referral a {
             color: #007BFF;
             text-decoration: none;
         }
 
-        a:hover {
+        .referral a:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 <body>
-    <h1>Добро пожаловать в мой Mini App!</h1>
+    <h1>Мой Mini App</h1>
 
-    <!-- Выбор суммы -->
-    <div>
-        <label for="amount">Введите сумму для пополнения:</label>
-        <input type="number" id="amount" name="amount" min="0.1" step="0.1" placeholder="Сумма в TON">
+    <!-- Вкладки для навигации -->
+    <div class="tab-buttons">
+        <button onclick="switchTab('balance')">Баланс</button>
+        <button onclick="switchTab('payment')">Оплата</button>
+        <button onclick="switchTab('case')">CASE</button>
     </div>
 
-    <!-- Кнопка для оплаты TON -->
-    <button onclick="payTON()">Оплатить через TON</button>
+    <!-- Контент вкладок -->
+    <div id="balance" class="tab-content">
+        <h2>Ваш баланс:</h2>
+        <p id="currentBalance">0.00 TON</p>
+    </div>
 
-    <p>Реферальная ссылка: <a href="https://vaskanx.github.io/My-mini-app/?ref=your_ref_code" target="_blank">Ссылка для приглашения</a></p>
+    <div id="payment" class="tab-content">
+        <h2>Пополнение через TON</h2>
+        <div>
+            <label for="amount">Введите сумму для пополнения:</label>
+            <input type="number" id="amount" name="amount" min="0.1" step="0.1" placeholder="Сумма в TON">
+        </div>
+        <button onclick="payTON()">Оплатить через TON</button>
+    </div>
 
-    <!-- Место для сообщения об успешной оплате -->
+    <div id="case" class="tab-content">
+        <h2>Слот для кейсов!</h2>
+        <button onclick="openCase()">Открою кейс!</button>
+        <div id="caseResult" style="display:none; margin-top:20px;"></div>
+    </div>
+
+    <!-- Реферальная ссылка -->
+    <div class="referral">
+        <p>Реферальная ссылка: <a href="https://vaskanx.github.io/My-mini-app/?ref=your_ref_code" target="_blank">Перейти по ссылке</a></p>
+    </div>
+
     <div id="successMessage" style="display:none; color: green; margin-top: 20px;">
         <h3>Оплата прошла успешно! Спасибо за пополнение!</h3>
     </div>
 
     <script>
-        // Функция для перехода в Tonkeeper с вводом суммы
+        // Инициализация Telegram Web App
+        Telegram.WebApp.ready();
+
+        // Функция переключения вкладок
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Показываем выбранную вкладку
+            const activeTab = document.getElementById(tabName);
+            activeTab.classList.add('active');
+        }
+
+        // Функция для оплаты через TON
         function payTON() {
             const wallet = "UQDyF3c6uCGHIbbLdEkj9VJeGdYZNiWOqB2UeJTivaKmOvJn";
-            const amount = document.getElementById('amount').value; // Берём сумму из поля ввода
+            const amount = document.getElementById('amount').value;
             if (!amount || amount <= 0) {
                 alert('Пожалуйста, укажите сумму для перевода!');
                 return;
@@ -81,21 +183,28 @@
             const url = `https://tonkeeper.app/transfer/${wallet}?amount=${amount}&text=${comment}`;
             window.open(url, "_blank");
 
-            // После успешной оплаты показываем сообщение
+            // Показываем сообщение об успешной оплате
             setTimeout(() => {
                 document.getElementById('successMessage').style.display = 'block';
-            }, 2000); // Имитация успешной оплаты через 2 секунды
+            }, 2000);
         }
 
-        // Для рефералов (покажем реферальный код)
+        // Функция для открытия кейса
+        function openCase() {
+            const caseResult = Math.random() > 0.5 ? "Вы выиграли 10 TON!" : "Попробуйте еще раз!";
+            document.getElementById('caseResult').innerText = caseResult;
+            document.getElementById('caseResult').style.display = 'block';
+        }
+
+        // Реализация реферальной ссылки
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref');
         if (refCode) {
-            alert(`Вы зашли через реферальную ссылку: ${refCode}. Поздравляем! Вы получаете бонус!`);
+            alert(`Вы зашли по реферальной ссылке: ${refCode}. Вы получаете бонус!`);
         }
 
-        // Когда Telegram Web App будет готов
-        Telegram.WebApp.ready();
+        // Инициализация первой вкладки
+        switchTab('balance');
     </script>
 </body>
 </html>
