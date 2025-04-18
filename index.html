@@ -1,12 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Мой Mini App</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Можно добавить стили для кнопок и текста -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-  <h1>Добро пожаловать в мой Mini App!</h1>
-  <button onclick="Telegram.WebApp.close()">Закрыть</button>
-  <script>Telegram.WebApp.ready();</script>
+    <h1>Добро пожаловать в мой Mini App!</h1>
+
+    <!-- Кнопка для закрытия -->
+    <button onclick="Telegram.WebApp.close()">Закрыть</button>
+
+    <!-- Кнопка для пополнения -->
+    <button onclick="openPayment()">Пополнить баланс</button>
+
+    <!-- Реферальная ссылка -->
+    <p>Реферальная ссылка: <a href="https://example.com?ref=your_ref_code" target="_blank">Ссылка для приглашения</a></p>
+
+    <script>
+        // Когда Telegram Web App будет готов
+        Telegram.WebApp.ready();
+
+        // Функция для пополнения баланса
+        function openPayment() {
+            alert('Переход к пополнению баланса!');
+            // Тут можно добавить свой функционал для пополнения
+        }
+    </script>
 </body>
 </html>
