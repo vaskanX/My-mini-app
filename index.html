@@ -16,7 +16,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
         }
 
         h1 {
@@ -41,108 +40,45 @@
             background-color: #45a049;
         }
 
-        input[type="number"], input[type="text"] {
+        .deposit-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        input[type="number"] {
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ccc;
+            border: 2px solid #ddd;
             border-radius: 5px;
-            width: 200px;
-            text-align: center;
+            margin-right: 10px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
             margin-top: 10px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .tab-buttons {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .tab-buttons button {
-            background-color: #007BFF;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Анимации */
-        .fade-in {
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Стиль для кейса */
-        .case-container {
-            width: 100%;
-            max-width: 600px;
+        #result {
             margin-top: 20px;
-            overflow-x: scroll;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-        }
-
-        .case-item {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 10px;
-            min-width: 120px;
-            text-align: center;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .case-item:hover {
-            transform: scale(1.05);
-        }
-
-        .case-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .case-price {
-            margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
             color: #4CAF50;
         }
-
-        /* Стиль для реферальной ссылки */
-        .referral {
-            margin-top: 20px;
-            font-size: 16px;
+        
+        #deposit-btn {
+            background-color: #4CAF50;
         }
 
-        .referral a {
-            color: #007BFF;
-            text-decoration: none;
+        #deposit-btn.disabled {
+            background-color: #bbb;
+            cursor: not-allowed;
         }
 
-        .referral a:hover {
-            text-decoration: underline;
+        #deposit-btn:hover {
+            background-color: #45a049;
         }
+
     </style>
 </head>
 <body>
@@ -150,52 +86,53 @@
 
     <!-- Вкладки для навигации -->
     <div class="tab-buttons">
-        <button onclick="switchTab('balance')">Баланс</button>
-        <button onclick="switchTab('payment')">Оплата</button>
+        <button onclick="switchTab('deposit')">Пополнить</button>
         <button onclick="switchTab('case')">CASE</button>
     </div>
 
-    <!-- Контент вкладок -->
-    <div id="balance" class="tab-content">
-        <h2>Ваш баланс:</h2>
-        <p id="currentBalance">0.00 TON</p>
+    <!-- Контент Пополнения -->
+    <div id="deposit" class="tab-content">
+        <h2>Пополнить баланс</h2>
+        <div class="deposit-container">
+            <input type="number" id="depositAmount" placeholder="Введите сумму (TON)" min="1.5" step="0.1">
+            <button id="deposit-btn" onclick="processDeposit()">Пополнить</button>
+            <p class="error-message" id="error-message"></p>
+        </div>
+        <div id="result"></div>
     </div>
 
-    <div id="payment" class="tab-content">
-        <h2>Пополнение через Telegram-кошелёк (TON)</h2>
-        <button onclick="payTON()">Оплатить через Telegram</button>
-    </div>
-
+    <!-- Контент CASE -->
     <div id="case" class="tab-content">
         <h2>Слот для кейсов!</h2>
         <div class="case-container">
-            <div class="case-item">
-                <img src="https://via.placeholder.com/100" alt="Предмет 1">
-                <p>Кейс 1</p>
-                <div class="case-price">100 TON</div>
-            </div>
-            <div class="case-item">
-                <img src="https://via.placeholder.com/100" alt="Предмет 2">
-                <p>Кейс 2</p>
-                <div class="case-price">200 TON</div>
-            </div>
-            <div class="case-item">
-                <img src="https://via.placeholder.com/100" alt="Предмет 3">
-                <p>Кейс 3</p>
-                <div class="case-price">300 TON</div>
+            <div class="case-items" id="caseItems">
+                <div class="case-item">
+                    <img src="https://via.placeholder.com/100" alt="Предмет 1">
+                    <p>Кейс 1</p>
+                    <div class="case-price">100 TON</div>
+                </div>
+                <div class="case-item">
+                    <img src="https://via.placeholder.com/100" alt="Предмет 2">
+                    <p>Кейс 2</p>
+                    <div class="case-price">200 TON</div>
+                </div>
+                <div class="case-item">
+                    <img src="https://via.placeholder.com/100" alt="Предмет 3">
+                    <p>Кейс 3</p>
+                    <div class="case-price">300 TON</div>
+                </div>
             </div>
         </div>
+
         <button onclick="openCase()">Открою кейс!</button>
-        <div id="caseResult" style="display:none; margin-top:20px;"></div>
-    </div>
-
-    <!-- Реферальная ссылка -->
-    <div class="referral">
-        <p>Реферальная ссылка: <a href="https://vaskanx.github.io/My-mini-app/?ref=your_ref_code" target="_blank">Перейти по ссылке</a></p>
-    </div>
-
-    <div id="successMessage" style="display:none; color: green; margin-top: 20px;">
-        <h3>Оплата прошла успешно! Спасибо за пополнение!</h3>
+        
+        <div id="result">
+            <p>Результат:</p>
+            <div id="winning-item">
+                <img id="winning-img" src="" alt="Выигранный предмет">
+                <p id="winning-price"></p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -204,53 +141,58 @@
 
         // Функция переключения вкладок
         function switchTab(tabName) {
-            // Скрываем все вкладки
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => {
                 tab.classList.remove('active');
             });
 
-            // Показываем выбранную вкладку
             const activeTab = document.getElementById(tabName);
             activeTab.classList.add('active');
         }
 
-        // Функция для оплаты через Telegram-кошелёк
-        function payTON() {
-            const amount = 100;  // Установим фиксированную сумму для оплаты, можно сделать динамичным
-            const wallet = "UQDyF3c6uCGHIbbLdEkj9VJeGdYZNiWOqB2UeJTivaKmOvJn";
-            const comment = encodeURIComponent("Пополнение баланса через Telegram");
+        // Функция для обработки депозита
+        function processDeposit() {
+            const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+            const errorMessage = document.getElementById('error-message');
+            const depositButton = document.getElementById('deposit-btn');
+            const result = document.getElementById('result');
 
-            // Используем web_app для оплаты через Telegram
-            Telegram.WebApp.sendData(JSON.stringify({
-                "type": "payment",
-                "wallet": wallet,
-                "amount": amount,
-                "comment": comment
-            }));
+            // Проверка минимальной суммы депозита
+            if (isNaN(depositAmount) || depositAmount < 1.5) {
+                errorMessage.innerText = "Минимальная сумма депозита: 1.5 TON";
+                depositButton.classList.add('disabled');
+            } else {
+                errorMessage.innerText = "";
+                depositButton.classList.remove('disabled');
 
-            // Показываем сообщение об успешной оплате
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'block';
-            }, 2000);
+                // Действия после успешного депозита (например, вызвать функцию для отправки средств)
+                result.innerHTML = `<p>Вы пополнили баланс на ${depositAmount} TON.</p>`;
+                Telegram.WebApp.sendData(`Пополнение на ${depositAmount} TON успешно выполнено.`);
+
+                // Здесь добавь свой код для выполнения транзакции через Telegram-кошелек.
+            }
         }
 
         // Функция для открытия кейса
         function openCase() {
-            const caseResult = Math.random() > 0.5 ? "Вы выиграли 10 TON!" : "Попробуйте еще раз!";
-            document.getElementById('caseResult').innerText = caseResult;
-            document.getElementById('caseResult').style.display = 'block';
+            const caseItems = document.getElementById("caseItems");
+            caseItems.style.transform = "translateX(-300%)";
+
+            setTimeout(() => {
+                const items = document.querySelectorAll(".case-item");
+                const randomIndex = Math.floor(Math.random() * items.length);
+                const winningItem = items[randomIndex];
+                const imgSrc = winningItem.querySelector("img").src;
+                const price = winningItem.querySelector(".case-price").innerText;
+
+                document.getElementById("winning-img").src = imgSrc;
+                document.getElementById("winning-price").innerText = price;
+
+                document.getElementById("winning-item").style.display = "block";
+            }, 3000); 
         }
 
-        // Реализация реферальной ссылки
-        const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref');
-        if (refCode) {
-            alert(`Вы зашли по реферальной ссылке: ${refCode}. Вы получаете бонус!`);
-        }
-
-        // Инициализация первой вкладки
-        switchTab('balance');
+        switchTab('deposit');
     </script>
 </body>
 </html>
