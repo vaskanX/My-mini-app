@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* Основной стиль */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #fafafa;
@@ -17,17 +16,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
         h1 {
             color: #4CAF50;
             font-size: 2em;
             margin-bottom: 20px;
-        }
-
-        h2 {
-            color: #333;
-            font-size: 1.5em;
         }
 
         button {
@@ -62,7 +57,6 @@
             text-align: center;
         }
 
-        /* Добавляем стили для вкладок */
         .tab-buttons {
             display: flex;
             justify-content: space-around;
@@ -96,6 +90,45 @@
             }
         }
 
+        /* Стиль для кейса */
+        .case-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            overflow-x: scroll;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .case-item {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 120px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .case-item:hover {
+            transform: scale(1.05);
+        }
+
+        .case-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .case-price {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
         /* Стиль для реферальной ссылки */
         .referral {
             margin-top: 20px;
@@ -110,7 +143,6 @@
         .referral a:hover {
             text-decoration: underline;
         }
-
     </style>
 </head>
 <body>
@@ -130,16 +162,29 @@
     </div>
 
     <div id="payment" class="tab-content">
-        <h2>Пополнение через TON</h2>
-        <div>
-            <label for="amount">Введите сумму для пополнения:</label>
-            <input type="number" id="amount" name="amount" min="0.1" step="0.1" placeholder="Сумма в TON">
-        </div>
-        <button onclick="payTON()">Оплатить через TON</button>
+        <h2>Пополнение через Telegram-кошелёк (TON)</h2>
+        <button onclick="payTON()">Оплатить через Telegram</button>
     </div>
 
     <div id="case" class="tab-content">
         <h2>Слот для кейсов!</h2>
+        <div class="case-container">
+            <div class="case-item">
+                <img src="https://via.placeholder.com/100" alt="Предмет 1">
+                <p>Кейс 1</p>
+                <div class="case-price">100 TON</div>
+            </div>
+            <div class="case-item">
+                <img src="https://via.placeholder.com/100" alt="Предмет 2">
+                <p>Кейс 2</p>
+                <div class="case-price">200 TON</div>
+            </div>
+            <div class="case-item">
+                <img src="https://via.placeholder.com/100" alt="Предмет 3">
+                <p>Кейс 3</p>
+                <div class="case-price">300 TON</div>
+            </div>
+        </div>
         <button onclick="openCase()">Открою кейс!</button>
         <div id="caseResult" style="display:none; margin-top:20px;"></div>
     </div>
@@ -170,18 +215,19 @@
             activeTab.classList.add('active');
         }
 
-        // Функция для оплаты через TON
+        // Функция для оплаты через Telegram-кошелёк
         function payTON() {
+            const amount = 100;  // Установим фиксированную сумму для оплаты, можно сделать динамичным
             const wallet = "UQDyF3c6uCGHIbbLdEkj9VJeGdYZNiWOqB2UeJTivaKmOvJn";
-            const amount = document.getElementById('amount').value;
-            if (!amount || amount <= 0) {
-                alert('Пожалуйста, укажите сумму для перевода!');
-                return;
-            }
+            const comment = encodeURIComponent("Пополнение баланса через Telegram");
 
-            const comment = encodeURIComponent("Пополнение баланса в Mini App");
-            const url = `https://tonkeeper.app/transfer/${wallet}?amount=${amount}&text=${comment}`;
-            window.open(url, "_blank");
+            // Используем web_app для оплаты через Telegram
+            Telegram.WebApp.sendData(JSON.stringify({
+                "type": "payment",
+                "wallet": wallet,
+                "amount": amount,
+                "comment": comment
+            }));
 
             // Показываем сообщение об успешной оплате
             setTimeout(() => {
