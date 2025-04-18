@@ -6,124 +6,131 @@
     <title>Мой Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Основной стиль */
         body {
             font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
+            background-color: #121212;
             color: #fff;
-            padding: 0;
             margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             height: 100vh;
         }
 
         h1 {
-            color: #fff;
-            font-size: 2.5em;
-            margin-top: 50px;
+            font-size: 2em;
+            margin-top: 30px;
+            text-align: center;
         }
 
-        /* Баланс в левом углу */
-        #balance {
+        /* Стиль кнопок */
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Стиль для баланса и профиля */
+        #profile, #balance {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: rgba(0, 0, 0, 0.5);
             padding: 10px 20px;
-            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            font-size: 18px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
             cursor: pointer;
         }
 
-        #balance span {
-            font-size: 18px;
-            font-weight: bold;
+        #balance {
+            left: 80%;
         }
 
         /* Стиль для пополнения */
         .deposit-container {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 100px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 20px;
         }
 
         input[type="number"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            margin-right: 10px;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #00d0ff;
+            border-radius: 10px;
+            width: 200px;
+            background-color: #1c1c1c;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #00d0ff;
             color: white;
-            padding: 15px 32px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        /* Профиль */
-        #profile {
-            margin-top: 20px;
+            padding: 15px 40px;
             font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-
     <!-- Баланс -->
-    <div id="balance">
-        <span>Баланс: 0 TON</span>
-    </div>
+    <div id="balance">Баланс: 0.00 TON</div>
 
     <!-- Профиль -->
-    <div id="profile">
-        <h2>Ваш Профиль</h2>
-        <p>Ник: <span id="username">Загрузка...</span></p>
+    <div id="profile">Ник: <span id="username"></span></div>
+
+    <!-- Навигация -->
+    <div>
+        <button class="nav-button" id="mainButton">Главная</button>
+        <button class="nav-button" id="inviteButton">Пригласить</button>
+        <button class="nav-button" id="profileButton">Профиль</button>
     </div>
 
     <!-- Пополнение -->
     <div class="deposit-container">
-        <h3>Пополнить баланс</h3>
-        <input type="number" id="depositAmount" placeholder="Введите сумму (TON)" min="1.5" step="0.1">
-        <button id="deposit-btn" onclick="processDeposit()">Пополнить</button>
+        <h2>Пополнить баланс</h2>
+        <input type="number" id="depositAmount" placeholder="Введите сумму" min="1.5">
+        <button id="depositButton">Пополнить</button>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
+        // Инициализация данных через Telegram Web App API
         Telegram.WebApp.ready();
-
-        // Получение данных пользователя
         const user = Telegram.WebApp.initDataUnsafe;
-        const username = user.user ? user.user.username : 'Неизвестно';
-        document.getElementById('username').innerText = username;
+        document.getElementById("username").textContent = user?.user?.username || "Неизвестный";
 
-        // Обновление баланса
-        let balance = 0;
-        document.getElementById('balance').addEventListener('click', () => {
-            // Здесь нужно добавить логику для отображения баланса
-            alert('Баланс: ' + balance + ' TON');
-        });
+        let balance = 0; // Стартовый баланс
 
-        // Функция пополнения баланса
-        function processDeposit() {
-            const depositAmount = parseFloat(document.getElementById('depositAmount').value);
-            if (isNaN(depositAmount) || depositAmount < 1.5) {
-                alert('Минимальная сумма депозита: 1.5 TON');
-                return;
+        // Обработчик кнопки пополнения
+        document.getElementById("depositButton").onclick = function() {
+            const depositAmount = parseFloat(document.getElementById("depositAmount").value);
+            if (depositAmount >= 1.5) {
+                balance += depositAmount;
+                document.getElementById("balance").textContent = `Баланс: ${balance.toFixed(2)} TON`;
+                alert('Пополнение успешно!');
+            } else {
+                alert('Минимальный депозит 1.5 TON');
             }
-
-            balance += depositAmount;
-            alert('Вы пополнили баланс на ' + depositAmount + ' TON');
-            document.getElementById('balance').innerHTML = 'Баланс: ' + balance + ' TON';
-        }
+        };
     </script>
-
 </body>
 </html>
